@@ -1,40 +1,30 @@
-/*
-See LICENSE folder for this sample’s licensing information.
-
-Abstract:
-Primary view controller table view data source for handling drag and drop.
-*/
+//
+//  DNDTableViewDelegate.swift
+//  TableViewDragDrop
+//
+//  Created by Patrick Cusack on 1/8/22.
+//  Copyright © 2022 Apple. All rights reserved.
+//
 
 import Cocoa
 import UniformTypeIdentifiers // for UTType
 
-// MARK: NSTableViewDataSource
-
-/**
- 
-        pasteboardWriterForRow
-            draggingSession start
-                validateDrop
-                    dragSourceIsFromOurTable
-                validateDrop: move
-                validateDrop
-                validateDrop: ontop, bailing
-                validateDrop
-                    dragSourceIsFromOurTable
-                validateDrop: move
-                validateDrop
-                    dragSourceIsFromOurTable
-                validateDrop: move
-            acceptDrop
-                dragSourceIsFromOurTable
-                dropInternalPhotos
-                    moveObjectsFromIndexes
-                    rowsMovedDownward
-            draggingSession endedAt
- 
- */
-
-extension ViewController: NSTableViewDataSource {
+class DNDTableViewDelegate: NSObject, NSTableViewDataSource {
+    
+    var tableView: NSTableView!
+//    var contentArray: [Any]!
+    
+    @objc dynamic var contentArray: [PlaceholderObject] = [PlaceholderObject(firstName: "Ragnarok", lastName: "Lothbrok", mobileNumber: "555-12347"),
+                                                          PlaceholderObject(firstName: "Bjorn", lastName: "Lothbrok", mobileNumber: "555-34129"),
+                                                          PlaceholderObject(firstName: "Harald", lastName: "Finehair", mobileNumber: "555-45128")]
+    
+    init(tableView: NSTableView, contentArray: [Any]) {
+        super.init()
+        
+        self.tableView = tableView
+//        self.contentArray = contentArray
+        self.tableView.dataSource = self
+    }
     
     /** Dragging Source Support - Optional. Implement this method to know when the dragging session is about to begin and to potentially modify the dragging session.'rowIndexes' are the row indexes being dragged, excluding rows that were not dragged due to tableView:pasteboardWriterForRow: returning nil. The order will directly match the pasteboard writer array used to begin the dragging session with [NSView beginDraggingSessionWithItems:event:source]. Hence, the order is deterministic, and can be used in -tableView:acceptDrop:row:dropOperation: when enumerating the NSDraggingInfo's pasteboard classes.
      */
@@ -207,7 +197,7 @@ extension ViewController: NSTableViewDataSource {
         let rowsMovedDown = rowsMovedDownward(toRow, indexSet: indexesToMove)
         let selectionRange = toRow - rowsMovedDown..<toRow - rowsMovedDown + indexesToMove.count
         let indexSet = IndexSet(integersIn: selectionRange)
-        tableView.selectRowIndexes(indexSet, byExtendingSelection: false)
+        self.tableView.selectRowIndexes(indexSet, byExtendingSelection: false)
     }
     
     // MARK: - Table Row Movement Utilities
@@ -228,14 +218,25 @@ extension ViewController: NSTableViewDataSource {
                 removeIndex = currentIndex!
                 insertIndex -= 1
             }
-          
+            
+            for obj in contentArray {
+                if let place = obj as? PlaceholderObject {
+                    print("Before \(place.firstName)")
+                }
+            }
+            
             let object = contentArray[removeIndex]
             contentArray.remove(at: removeIndex)
             contentArray.insert(object, at: insertIndex)
+            
+            for obj in contentArray {
+                if let place = obj as? PlaceholderObject {
+                    print("After \(place.firstName)")
+                }
+            }
           
             currentIndex = indexSet.integerLessThan(currentIndex!)
         }
-        
     }
     
     // Returns the number of rows dragged in a downward direction within the table view.
@@ -253,3 +254,4 @@ extension ViewController: NSTableViewDataSource {
     }
     
 }
+

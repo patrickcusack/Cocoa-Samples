@@ -13,6 +13,8 @@
 		2A02BDDB2788BD2700E3BEFA /* PhotoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A02BDDA2788BD2600E3BEFA /* PhotoItem.swift */; };
 		2A02BDDE2788BD2D00E3BEFA /* LoadThumbnailOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A02BDDC2788BD2D00E3BEFA /* LoadThumbnailOperation.swift */; };
 		2A02BDDF2788BD2D00E3BEFA /* LoadPhotosOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A02BDDD2788BD2D00E3BEFA /* LoadPhotosOperation.swift */; };
+		2AE7C61D278914EE004D10AF /* Extra.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE7C61C278914EE004D10AF /* Extra.swift */; };
+		2AE7C61F278A944F004D10AF /* DNDTableViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE7C61E278A944F004D10AF /* DNDTableViewDelegate.swift */; };
 		535908EC2421777E0081728F /* ViewController+DragAndDrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535908EB2421777E0081728F /* ViewController+DragAndDrop.swift */; };
 		5385AA2924205B7A0059982F /* PromiseFileProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5385AA2224205B7A0059982F /* PromiseFileProvider.swift */; };
 		5385AA2B24205B7A0059982F /* TableCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5385AA2424205B7A0059982F /* TableCellView.swift */; };
@@ -33,6 +35,8 @@
 		2A02BDDA2788BD2600E3BEFA /* PhotoItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PhotoItem.swift; path = TableViewDragDrop/PhotoItem.swift; sourceTree = "<group>"; };
 		2A02BDDC2788BD2D00E3BEFA /* LoadThumbnailOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LoadThumbnailOperation.swift; path = TableViewDragDrop/LoadThumbnailOperation.swift; sourceTree = "<group>"; };
 		2A02BDDD2788BD2D00E3BEFA /* LoadPhotosOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LoadPhotosOperation.swift; path = TableViewDragDrop/LoadPhotosOperation.swift; sourceTree = "<group>"; };
+		2AE7C61C278914EE004D10AF /* Extra.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extra.swift; sourceTree = "<group>"; };
+		2AE7C61E278A944F004D10AF /* DNDTableViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DNDTableViewDelegate.swift; sourceTree = "<group>"; };
 		53273FAD2426BDA200E5253D /* TableViewDragDrop.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = TableViewDragDrop.entitlements; path = TableViewDragDrop/TableViewDragDrop.entitlements; sourceTree = "<group>"; };
 		5341010D1AFD23B2003BC1D6 /* TableViewDragDrop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TableViewDragDrop.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		535908EB2421777E0081728F /* ViewController+DragAndDrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "ViewController+DragAndDrop.swift"; path = "TableViewDragDrop/ViewController+DragAndDrop.swift"; sourceTree = "<group>"; };
@@ -96,9 +100,11 @@
 			isa = PBXGroup;
 			children = (
 				5385AA2524205B7A0059982F /* AppDelegate.swift */,
+				2AE7C61C278914EE004D10AF /* Extra.swift */,
 				5385AA2724205B7A0059982F /* ViewController.swift */,
 				2A02BDD82788B85E00E3BEFA /* Placeholder.swift */,
 				535908EB2421777E0081728F /* ViewController+DragAndDrop.swift */,
+				2AE7C61E278A944F004D10AF /* DNDTableViewDelegate.swift */,
 				2A02BDD427866F7600E3BEFA /* PCLogger.swift */,
 				2A02BDD627866F9D00E3BEFA /* PCSugar.swift */,
 				2A02BDE02788BD3600E3BEFA /* Unused */,
@@ -215,7 +221,9 @@
 			files = (
 				5385AA2924205B7A0059982F /* PromiseFileProvider.swift in Sources */,
 				2A02BDD727866F9D00E3BEFA /* PCSugar.swift in Sources */,
+				2AE7C61D278914EE004D10AF /* Extra.swift in Sources */,
 				5385AA2B24205B7A0059982F /* TableCellView.swift in Sources */,
+				2AE7C61F278A944F004D10AF /* DNDTableViewDelegate.swift in Sources */,
 				535908EC2421777E0081728F /* ViewController+DragAndDrop.swift in Sources */,
 				2A02BDDE2788BD2D00E3BEFA /* LoadThumbnailOperation.swift in Sources */,
 				5385AA2C24205B7A0059982F /* AppDelegate.swift in Sources */,

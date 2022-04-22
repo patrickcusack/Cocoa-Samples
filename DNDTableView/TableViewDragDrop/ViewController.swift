@@ -21,6 +21,7 @@ class DNDLogger : PCLogger {
 class ViewController: NSViewController {
    
 	@IBOutlet weak var tableView: NSTableView!
+    @objc dynamic var tableViewDelegate: DNDTableViewDelegate!
     
     /** This contentArray need @objc to make it key value compliant with this view controller,
         and so they are accessible and usable with Cocoa bindings.
@@ -29,13 +30,15 @@ class ViewController: NSViewController {
                                                           PlaceholderObject(firstName: "Bjorn", lastName: "Lothbrok", mobileNumber: "555-34129"),
                                                           PlaceholderObject(firstName: "Harald", lastName: "Finehair", mobileNumber: "555-45128")]
     
-
 	// MARK: - View life cycle
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		
-        tableView.dataSource = self // Necessary for drag and drop.
+        
+//        tableView.dataSource = self // Necessary for drag and drop.
+        
+        //This isn't working yet
+        self.tableViewDelegate = DNDTableViewDelegate(tableView: tableView, contentArray: contentArray)
         
 //        // Accept file promises from apps like Safari.
 //        tableView.registerForDraggedTypes(
@@ -51,4 +54,5 @@ class ViewController: NSViewController {
 
 	}
     
+
 }
