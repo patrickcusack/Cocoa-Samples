@@ -12,17 +12,14 @@ import UniformTypeIdentifiers // for UTType
 class DNDTableViewDelegate: NSObject, NSTableViewDataSource {
     
     var tableView: NSTableView!
-//    var contentArray: [Any]!
-    
     @objc dynamic var contentArray: [PlaceholderObject] = [PlaceholderObject(firstName: "Ragnarok", lastName: "Lothbrok", mobileNumber: "555-12347"),
                                                           PlaceholderObject(firstName: "Bjorn", lastName: "Lothbrok", mobileNumber: "555-34129"),
                                                           PlaceholderObject(firstName: "Harald", lastName: "Finehair", mobileNumber: "555-45128")]
     
-    init(tableView: NSTableView, contentArray: [Any]) {
+    init(tableView: NSTableView) {
         super.init()
         
         self.tableView = tableView
-//        self.contentArray = contentArray
         self.tableView.dataSource = self
     }
     

@@ -38,7 +38,7 @@ class ViewController: NSViewController {
 //        tableView.dataSource = self // Necessary for drag and drop.
         
         //This isn't working yet
-        self.tableViewDelegate = DNDTableViewDelegate(tableView: tableView, contentArray: contentArray)
+        self.tableViewDelegate = DNDTableViewDelegate(tableView: tableView)
         
 //        // Accept file promises from apps like Safari.
 //        tableView.registerForDraggedTypes(
