@@ -9,18 +9,20 @@
 import Cocoa
 import UniformTypeIdentifiers // for UTType
 
-class DNDTableViewDelegate: NSObject, NSTableViewDataSource {
+///This will be an angnostic datasource that will have no knowledge of the underlying datatype
+
+class DNDTableViewDelegateAlt: NSObject, NSTableViewDataSource {
     
     var tableView: NSTableView!
-    @objc dynamic var contentArray: [PlaceholderObject] = [PlaceholderObject(firstName: "Ragnarok", lastName: "Lothbrok", mobileNumber: "555-12347"),
-                                                          PlaceholderObject(firstName: "Bjorn", lastName: "Lothbrok", mobileNumber: "555-34129"),
-                                                          PlaceholderObject(firstName: "Harald", lastName: "Finehair", mobileNumber: "555-45128")]
+    var arrayController: NSArrayController!
+    var undoManager : UndoManager?
     
-    init(tableView: NSTableView) {
+    init(tableView: NSTableView, controller: NSArrayController) {
         super.init()
         
         self.tableView = tableView
         self.tableView.dataSource = self
+        self.arrayController = controller
     }
     
     /** Dragging Source Support - Optional. Implement this method to know when the dragging session is about to begin and to potentially modify the dragging session.'rowIndexes' are the row indexes being dragged, excluding rows that were not dragged due to tableView:pasteboardWriterForRow: returning nil. The order will directly match the pasteboard writer array used to begin the dragging session with [NSView beginDraggingSessionWithItems:event:source]. Hence, the order is deterministic, and can be used in -tableView:acceptDrop:row:dropOperation: when enumerating the NSDraggingInfo's pasteboard classes.
@@ -44,7 +46,7 @@ class DNDTableViewDelegate: NSObject, NSTableViewDataSource {
                    operation: NSDragOperation) {
         DNDLogger.shared.debug(str: "draggingSession endedAt")
         if operation == .delete, let items = session.draggingPasteboard.pasteboardItems {
-            // User dragged the photo to the Finder's trash.
+            // User dragged the item to the Finder's trash.
             for pasteboardItem in items {
                 Swift.debugPrint(pasteboardItem)
             }
@@ -59,8 +61,9 @@ class DNDTableViewDelegate: NSObject, NSTableViewDataSource {
         DNDLogger.shared.debug(str: "acceptDrop")
         // Check where the dragged items are coming.
         if dragSourceIsFromOurTable(draggingInfo: info) {
-            /** Drag source came from our own table view.
-                Move each dragged photo item to their new place.
+            /**
+                Drag source came from our own table view.
+                Move each dragged item to their new place.
             */
             handleInternalDrop(tableView, draggingInfo: info, toRow: row)
         } else {
@@ -75,7 +78,7 @@ class DNDTableViewDelegate: NSObject, NSTableViewDataSource {
     /** Dragging Source Support - Required for multi-image dragging. Implement this method to allow the table to be an NSDraggingSource that supports multiple item dragging. Return a custom object that implements NSPasteboardWriting (or simply use NSPasteboardItem). If this method is implemented, then tableView:writeRowsWithIndexes:toPasteboard: will not be called.
      */
     
-    // A PhotoItem in our table is being dragged for this given row, provide the pasteboard writer for this item.
+    // An Item in our table is being dragged for this given row, provide the pasteboard writer for this item.
     func tableView(_ tableView: NSTableView, pasteboardWriterForRow row: Int) -> NSPasteboardWriting? {
         DNDLogger.shared.debug(str: "Begin - pasteboardWriterForRow")
         
@@ -107,6 +110,8 @@ class DNDTableViewDelegate: NSObject, NSTableViewDataSource {
             DNDLogger.shared.debug(str: "validateDrop: move")
         } else {
             
+            ///To do - handle drop from another
+            
             /*
             let pasteboard = info.draggingPasteboard
             guard let items = pasteboard.pasteboardItems else { return dragOperation }
@@ -118,7 +123,7 @@ class DNDTableViewDelegate: NSObject, NSTableViewDataSource {
                     type = (kUTTypeImage as NSPasteboard.PasteboardType)
                 }
                 if item.availableType(from: [type]) != nil {
-                    // Drag source is coming from another app as a promised image file (for example from Photos app).
+                    // Drag source is coming from another app as a promised file
                     dragOperation = [.copy]
                     DNDLogger.shared.debug(str: "validateDrop: copy from outside")
                 }
@@ -170,9 +175,9 @@ class DNDTableViewDelegate: NSObject, NSTableViewDataSource {
         }
     }
     
-    // Drop the internal dragged photos in this table view to the target row number.
+    // Drop the internal dragged items in this table view to the target row number.
     func handleInternalDrop(_ tableView: NSTableView, draggingInfo: NSDraggingInfo, toRow: Int) {
-        DNDLogger.shared.debug(str: "dropInternalPhotos")
+        DNDLogger.shared.debug(str: "dropInternalItems")
         var indexesToMove = IndexSet()
         
         draggingInfo.enumerateDraggingItems(
@@ -182,12 +187,12 @@ class DNDTableViewDelegate: NSObject, NSTableViewDataSource {
             searchOptions: [:],
             using: {(draggingItem, idx, stop) in
                 if  let pasteboardItem = draggingItem.item as? NSPasteboardItem,
-                    let photoRow = pasteboardItem.propertyList(forType: .rowDragType) as? Int {
-                        indexesToMove.insert(photoRow)
+                    let itemRow = pasteboardItem.propertyList(forType: .rowDragType) as? Int {
+                        indexesToMove.insert(itemRow)
                     }
             })
                 
-        // Move/drop the photos in their correct place using their indexes.
+        // (Move|drop) the items in their correct place using their indexes.
         moveObjectsFromIndexes(indexesToMove, toIndex: toRow)
         
         // Set the selected rows to those that were just moved.
@@ -201,7 +206,7 @@ class DNDTableViewDelegate: NSObject, NSTableViewDataSource {
 
     // Move the set of objects within the indexSet to the 'toIndex' row number.
     func moveObjectsFromIndexes(_ indexSet: IndexSet, toIndex: Int) {
-        DNDLogger.shared.debug(str: "moveObjectsFromIndexes")
+        DNDLogger.shared.debug(str: "moveObjectsFromIndexes \(indexSet) \(toIndex)")
         var insertIndex = toIndex
         var currentIndex = indexSet.last
         var aboveInsertCount = 0
@@ -216,11 +221,20 @@ class DNDTableViewDelegate: NSObject, NSTableViewDataSource {
                 insertIndex -= 1
             }
             
-            let object = contentArray[removeIndex]
-            contentArray.remove(at: removeIndex)
-            contentArray.insert(object, at: insertIndex)
-    
-            currentIndex = indexSet.integerLessThan(currentIndex!)
+            if let array = self.arrayController.arrangedObjects as? Array<Any> {
+                
+                let object = array[removeIndex]
+                self.arrayController.removeObject(object)
+                self.arrayController.insert(object, atArrangedObjectIndex: insertIndex)
+                currentIndex = indexSet.integerLessThan(currentIndex!)
+                
+                undoManager?.registerUndo(withTarget: self.arrayController) {ac in
+                    let object = array[insertIndex]
+                    ac.removeObject(object)
+                    ac.insert(object, atArrangedObjectIndex: removeIndex)
+                }
+            }
+        
         }
     }
     
